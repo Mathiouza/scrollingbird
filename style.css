@@ -1,0 +1,45 @@
+body {
+    padding:0;
+    margin:0;
+
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color: rgb(236, 236, 236);
+}
+
+#banner {
+    width: 100%
+}
+
+#banner > img {
+    width: 100%
+}
+
+#prenav {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    background-color: black;
+}
+
+#prenav > .item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: 10px;
+    margin-left: 10px;
+    padding-right: 10px;
+    padding-left: 10px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+#prenav > .item:hover {
+    background-color: rgb(48, 48, 48);
+}
+
+#prenav > .item:visited {
+    text-decoration: none;
+    color: rgb(236, 236, 236);
+}
