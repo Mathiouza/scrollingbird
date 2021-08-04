@@ -35,6 +35,7 @@ body {
     padding-left: 10px;
     cursor: pointer;
     text-decoration: none;
+    color: rgb(236, 236, 236);
 }
 
 #prenav > .item:hover {
