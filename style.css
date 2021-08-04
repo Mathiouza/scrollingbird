@@ -4,6 +4,8 @@ body {
 
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     color: rgb(236, 236, 236);
+
+    background-color: black;
 }
 
 #banner {
@@ -40,6 +42,45 @@ body {
 }
 
 #prenav > .item:visited {
+    text-decoration: none;
+    color: rgb(236, 236, 236);
+}
+
+section {
+    width: 70%;
+    margin: auto;
+}
+
+#RRW2 {
+    background-image: url("./rrw2banner.gif");
+    padding-top: 50px;
+    padding-bottom: 50px;
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover; /* Resize the background image to cover the entire container */
+}
+
+.section-title {
+    text-decoration: underline;
+    display: inline-block;
+}
+
+.download-link {
+    display: inline-block;
+    text-decoration: none;
+    color: rgb(236, 236, 236);
+    background-color: rgba(0, 0, 0, 0.603);
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.download-link:hover {
+    background-color: rgba(51, 51, 51, 0.603);
+}
+
+.download-link:visited {
     text-decoration: none;
     color: rgb(236, 236, 236);
 }
