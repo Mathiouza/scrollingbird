@@ -56,6 +56,7 @@ section {
     width: 1360px;
     max-width: 100%;
     margin: auto;
+    margin-top: 20px;
 }
 
 #RRW2 {
@@ -65,6 +66,7 @@ section {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    display:flex;
 }
 
 .section-title {
@@ -109,4 +111,12 @@ h1 {
     html {
         font-size: 40px;
     }
+}
+
+.itch-widget {
+    margin-left: 10px;
+}
+
+#twitter-feed {
+    width: 600px;
 }
