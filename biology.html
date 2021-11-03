@@ -231,7 +231,8 @@
             }
 
             let color = rgbToHex(pixel[0], pixel[1], pixel[2]);
-            let reverseColor = rgbToHex(255-pixel[0], 255-pixel[1], 255-pixel[2]);
+            let moyenne = (pixel[0]+pixel[1]+pixel[2])/3;
+            let reverseColor = rgbToHex(255-moyenne, 255-moyenne, 255-moyenne);
 
             if(isFetchingNames) {
               await axios.get('https://admin.fouloscopie.com/users/'+accounts[X][Y].author).then(function (response) {
