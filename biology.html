@@ -26,6 +26,15 @@
       <a href="https://sunlifecomic.com" target="_blank">Mon (ancienne) BD (pas finie)</a><br/>
       <a href="https://scrollingbird.com" target="_blank">Mes jeux (en construction)</a><br/>
       <a href="https://mathieucasubolo.com" target="_blank">Mon portfolio</a>
+      <br/><br/>
+      Autres outils:<br/>
+      <a href="https://www.codati.ovh/" target="_blank">Récupérer le nom et la couleur par coordonnées - CoDaTi</a><br/>
+      <a href="https://www.eclixo.com/dirty" target="_blank">Rang de toutes les couleurs - Arnaud</a>
+      <br/><br/>
+      Ajouts prévus:<br/>
+      <ul>
+        <li>Redimensionnement automatique de l'image</li>
+      </ul>
     </div>
     (ne supporte que JPG et PNG)
     <form action="return false" style="margin-bottom: 30px; font-family: 'Courier New', Courier, monospace;">
@@ -216,6 +225,11 @@
             }
 
             let pixel = imageContext.getImageData(X, Y, 1, 1).data;
+
+            if(pixel[3] == 0) {
+              continue;
+            }
+
             let color = rgbToHex(pixel[0], pixel[1], pixel[2]);
 
             if(isFetchingNames) {
