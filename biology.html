@@ -231,11 +231,12 @@
             }
 
             let color = rgbToHex(pixel[0], pixel[1], pixel[2]);
+            let reverseColor = rgbToHex(255-pixel[0], 255-pixel[1], 255-pixel[2]);
 
             if(isFetchingNames) {
               await axios.get('https://admin.fouloscopie.com/users/'+accounts[X][Y].author).then(function (response) {
                 var spanObject = document.createElement('span');
-                spanObject.innerHTML = color+" @ ["+(X+1)+":"+(Y+1)+"] "+(color == accounts[X][Y].color ? "<span style='background-color:green; color: white; border-radius:3px;'>Déjà de la bonne couleur!</span>" : "<span style='background-color:red; color: white; border-radius:3px;'>Mauvaise couleur...</span>")+" "+response.data.data.last_name+"<br/>";
+                spanObject.innerHTML = "<span style='background-color:"+color+"; color:"+reverseColor+"'>"+color+"</span> @ ["+(X+1)+":"+(Y+1)+"] "+(color == accounts[X][Y].color ? "<span style='background-color:green; color: white; border-radius:3px;'>Déjà de la bonne couleur!</span>" : "<span style='background-color:red; color: white; border-radius:3px;'>Mauvaise couleur...</span>")+" "+response.data.data.last_name+"<br/>";
                 accountsElement.appendChild(spanObject);
               });
             }
@@ -243,7 +244,7 @@
               const promise = new Promise((resolve) => {
                 setTimeout(() => {
                   var spanObject = document.createElement('span');
-                  spanObject.innerHTML = color+" @ ["+(X+1)+":"+(Y+1)+"] "+(color == accounts[X][Y].color ? "<span style='background-color:green; color: white; border-radius:3px;'>Déjà de la bonne couleur!</span>" : "<span style='background-color:red; color: white; border-radius:3px;'>Mauvaise couleur...</span>")+" <span class='ButtonName' onclick='displayName(this, \""+accounts[X][Y].author+"\")'>Afficher nom</span><br/>";
+                  spanObject.innerHTML = "<span style='background-color:"+color+"; color:"+reverseColor+"'>"+color+"</span> @ ["+(X+1)+":"+(Y+1)+"] "+(color == accounts[X][Y].color ? "<span style='background-color:green; color: white; border-radius:3px;'>Déjà de la bonne couleur!</span>" : "<span style='background-color:red; color: white; border-radius:3px;'>Mauvaise couleur...</span>")+" <span class='ButtonName' onclick='displayName(this, \""+accounts[X][Y].author+"\")'>Afficher nom</span><br/>";
                   accountsElement.appendChild(spanObject);
                   resolve();
                 });
