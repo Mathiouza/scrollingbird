@@ -231,13 +231,12 @@
             }
 
             let color = rgbToHex(pixel[0], pixel[1], pixel[2]);
-            let moyenne = (pixel[0]+pixel[1]+pixel[2])/3;
-            let reverseColor = rgbToHex(255-moyenne, 255-moyenne, 255-moyenne);
+            let reverseColor = rgbToHex(255-pixel[0], 255-pixel[1], 255-pixel[2]);
 
             if(isFetchingNames) {
-              await axios.get('https://admin.fouloscopie.com/users/'+accounts[X][Y].author).then(function (response) {
+              await axios.get('https://www.codati.ovh/users/'+accounts[X][Y].author).then(function (response) {
                 var spanObject = document.createElement('span');
-                spanObject.innerHTML = "<span style='background-color:"+color+"; color:"+reverseColor+"'>"+color+"</span> @ ["+(X+1)+":"+(Y+1)+"] "+(color == accounts[X][Y].color ? "<span style='background-color:green; color: white; border-radius:3px;'>Déjà de la bonne couleur!</span>" : "<span style='background-color:red; color: white; border-radius:3px;'>Mauvaise couleur...</span>")+" "+response.data.data.last_name+"<br/>";
+                spanObject.innerHTML = "<span style='background-color:"+color+"; color:"+reverseColor+"'>"+color+"</span> @ ["+(X+1)+":"+(Y+1)+"] "+(color == accounts[X][Y].color ? "<span style='background-color:green; color: white; border-radius:3px;'>Déjà de la bonne couleur!</span>" : "<span style='background-color:red; color: white; border-radius:3px;'>Mauvaise couleur...</span>")+" "+(response.data.last_name == "" ? "COMPTE BANNI" : response.data.last_name)+"<br/>";
                 accountsElement.appendChild(spanObject);
               });
             }
@@ -268,6 +267,20 @@
         return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
       }
 
+      function hexToRgb(hex) {
+        var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+        hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+          return r + r + g + g + b + b;
+        });
+
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        } : null;
+      }
+
       function toggleLoading(isLoading) {
         document.getElementById("chargement").innerHTML = isLoading ? "Chargement..." : "";
         document.getElementById("charge").innerHTML = isLoading ? "" : "Chargé!";
@@ -290,8 +303,11 @@
         toggleLoading(true);
         spanObject.classList.remove("ButtonName");
         spanObject.removeAttribute("onclick");
-        await axios.get('https://admin.fouloscopie.com/users/'+authorID).then(function (response) {
-          spanObject.innerHTML = response.data.data.last_name;
+        await axios.get('https://www.codati.ovh/users/'+authorID).then(function (response) {
+          spanObject.innerHTML = response.data.last_name;
+          if(spanObject.innerHTML == "") {
+            spanObject.innerHTML = "COMPTE BANNI";
+          }
         });
         toggleLoading(false);
       }
@@ -300,7 +316,7 @@
         let result = "";
         let textLines = document.getElementById("accounts").innerText.split("\n");
         for(let line of textLines) {
-          if(!line.includes("Déjà de la bonne couleur!")) {
+          if(!line.includes("Déjà de la bonne couleur!") && !line.includes("COMPTE BANNI")) {
             result += line + "\n";
           }
         }
