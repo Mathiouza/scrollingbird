@@ -1,0 +1,294 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      .ButtonName {
+        color:red;
+        cursor: pointer;
+        transition: color .1s ease-in-out;
+      }
+
+      .ButtonName:hover {
+        color:green;
+      }
+    </style>
+    <title>Dirtybiology micronation</title>
+  </head>
+  <body>
+    <div style="margin-bottom: 30px; font-family: 'Courier New', Courier, monospace;">
+      Merci d'utiliser mon outil! 😀<br/>
+      Discord: Mathiouza#7437 (je suis sur le serveur de DirtyBiology, hésitez pas à me ping s'il y a un porblème)<br/>
+      <a href="https://www.deviantart.com/mathiouza/gallery/80600233/shadya-the-comic" target="_blank">Ma BD</a><br/>
+      <a href="https://twitter.com/ScrollingBird">Mon Twitter</a><br/>
+      <a href="https://sunlifecomic.com" target="_blank">Mon (ancienne) BD (pas finie)</a><br/>
+      <a href="https://scrollingbird.com" target="_blank">Mes jeux (en construction)</a><br/>
+      <a href="https://mathieucasubolo.com" target="_blank">Mon portfolio</a>
+    </div>
+    (ne supporte que JPG et PNG)
+    <form action="return false" style="margin-bottom: 30px; font-family: 'Courier New', Courier, monospace;">
+      <input disabled="true" type="file" id="myFile" name="filename">
+      <input disabled="true" type="number" id="inputX" value="1"> x
+      <input disabled="true" type="number" id="inputY" value="1">
+    </form>
+    <button disabled="true" onclick="displayNames(false)" id="generateListeWithoutNames">Générer la liste sans noms</button>
+    <button disabled="true" onclick="displayNames(true)" id="generateListeWithNames">Générer la liste avec noms (peut être très long &mdash; plusieurs minutes si l'image est grande)</button>
+    <button disabled="true" onclick="downloadList()" id="download">Télécharger la liste</button>
+    <div id="accounts" style="height:300px; font-family: 'Courier New', Courier, monospace; width:80vw; overflow-y: scroll;">
+
+    </div>
+    <div id="chargement" style="background-color: red;">
+      
+    </div>
+    <div id="charge" style="background-color: green;">
+
+    </div>
+    <div style="position: relative; margin-top: 10px;">
+      <canvas id="mainFlag" width="2" height="2" style="width:90vw; image-rendering: pixelated; position:absolute; left:0; top:0;"></canvas>
+      <canvas id="image" width="2", height="2" style="width:90vw; image-rendering:pixelated; position: absolute; left:0; top:0;"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      function getData() {
+        toggleLoading(true);
+        axios.get('https://api-flag.fouloscopie.com/flag').then(async function (response) {
+          const pixels = response.data;
+          let canvas = document.getElementById("mainFlag");
+          let canvasImage = document.getElementById("image");
+          let context = canvas.getContext("2d");
+          let pixelCount = 0;
+
+          let coords = {x:0, y:0};
+
+          let lineSize = 2;
+          let columnSize = 2;
+          let isPopulatingLine = 1;
+
+          for(let pixel of pixels) {
+            if (!pixel) return;
+
+            context.fillStyle = pixel.hexColor;
+            context.fillRect(coords.x, coords.y, 1, 1);
+
+            if(!accounts[coords.x]) {
+              accounts[coords.x] = [];
+            }
+
+            if(!accounts[coords.x][coords.y]) {
+              accounts[coords.x][coords.y] = {author:pixel.author, color:pixel.hexColor};
+            }
+
+            pixelCount++;
+
+            switch(pixelCount) {
+              case 1:
+                coords.x = 1;
+                break;
+              case 2:
+                coords.y = 1;
+                coords.x = 0;
+                break;
+              case 3:
+                coords.x = 1;
+                break;
+              case 4:
+                coords.y = 0;
+                coords.x = 2;
+                var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                canvas.width++;
+                canvasImage.width++;
+                context.putImageData(imageData, 0, 0);
+                break;
+              default:
+                if(isPopulatingLine == 0) {
+                  coords.x++;
+                  if(coords.x == lineSize) {
+                    coords.y = 0;
+                    columnSize++;
+                    isPopulatingLine = 1;
+                    var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                    canvas.width++;
+                    canvasImage.width++;
+                    context.putImageData(imageData, 0, 0);
+                  }
+                }
+                else {
+                  coords.y++;
+                  if(coords.y == columnSize) {
+                    if(isPopulatingLine == 1) {
+                      coords.y = 0;
+                      coords.x++;
+                      lineSize++;
+                      isPopulatingLine = 2;
+                      var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                      canvas.width++;
+                      canvasImage.width++;
+                      context.putImageData(imageData, 0, 0);
+                    }
+                    else {
+                      coords.x = 0;
+                      lineSize++;
+                      isPopulatingLine = 0;
+                      var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                      canvas.height++;
+                      canvasImage.height++;
+                      context.putImageData(imageData, 0, 0);
+                    }
+                  }
+                }
+            }
+          }
+
+          let imageContext = canvasImage.getContext("2d");
+
+          imageContext.fillStyle = "rgba(0, 0, 0, 0)";
+          imageContext.clearRect(0, 0, canvasImage.width, canvasImage.height);
+
+          console.log("Job done!");
+          toggleLoading(false);
+        });
+      }
+
+      let myFile = document.getElementById("myFile");
+
+      let accounts = [];
+      let coordsImage = {x:0, y:0};
+
+      getData();
+
+      let canvas = document.getElementById("mainFlag");
+      let canvasImage = document.getElementById("image");
+
+      
+      let img;
+
+      myFile.onchange = (event) => updateImage();
+      document.getElementById("inputX").onchange = (event) => updateImage();
+      document.getElementById("inputY").onchange = (event) => updateImage();
+
+      function updateImage() {
+        var files = myFile.files;
+        var file = files[0];
+        if(!file) {
+          return;
+        }
+        const  fileType = file['type'];
+        const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+        if (!validImageTypes.includes(fileType)) {
+          return;
+        }
+
+        toggleLoading(true);
+
+        if (FileReader && files && files.length) {
+          var fr = new FileReader();
+          fr.onload = () => {
+            img = new Image();
+            img.onload = () => {
+              let imageContext = canvasImage.getContext("2d");
+              imageContext.clearRect(0, 0, canvasImage.width, canvasImage.height);
+              coordsImage.x = parseInt(document.getElementById("inputX").value)-1;
+              coordsImage.y = parseInt(document.getElementById("inputY").value)-1;
+              imageContext.drawImage(img, coordsImage.x, coordsImage.y);
+              toggleLoading(false);
+            };
+            img.src = fr.result;
+          };
+          fr.readAsDataURL(file);
+        }
+      }
+
+      async function displayNames(isFetchingNames) {
+        toggleLoading(true);
+        let imageContext = canvasImage.getContext("2d");
+        document.getElementById("accounts").innerHTML = "";
+        for(let y = 0 ; y < img.height ; y++) {
+          for(let x = 0 ; x < img.width ; x++) {
+            let X = coordsImage.x+x;
+            let Y = coordsImage.y+y;
+            if(!accounts[X] || !accounts[X][Y]) {
+              continue;
+            }
+
+            let pixel = imageContext.getImageData(X, Y, 1, 1).data;
+            let color = rgbToHex(pixel[0], pixel[1], pixel[2]);
+
+            if(isFetchingNames) {
+              await axios.get('https://admin.fouloscopie.com/users/'+accounts[X][Y].author).then(function (response) {
+                document.getElementById("accounts").innerHTML += color+" @ ["+(X+1)+":"+(Y+1)+"] "+(color == accounts[X][Y].color ? "<span style='background-color:green; color: white; border-radius:3px;'>Déjà de la bonne couleur!</span>" : "<span style='background-color:red; color: white; border-radius:3px;'>Mauvaise couleur...</span>")+" "+response.data.data.last_name+"<br/>";
+              });
+            }
+            else {
+              document.getElementById("accounts").innerHTML += color+" @ ["+(X+1)+":"+(Y+1)+"] "+(color == accounts[X][Y].color ? "<span style='background-color:green; color: white; border-radius:3px;'>Déjà de la bonne couleur!</span>" : "<span style='background-color:red; color: white; border-radius:3px;'>Mauvaise couleur...</span>")+" <span class='ButtonName' onclick='displayName(this, \""+accounts[X][Y].author+"\")'>Afficher nom</span><br/>";
+            }
+
+            document.getElementById("accounts").scrollTo(0, document.getElementById("accounts").scrollHeight);
+          }
+        }
+        toggleLoading(false);
+      }
+
+      function componentToHex(c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+      }
+
+      function rgbToHex(r, g, b) {
+        return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+      }
+
+      function toggleLoading(isLoading) {
+        document.getElementById("chargement").innerHTML = isLoading ? "Chargement..." : "";
+        document.getElementById("charge").innerHTML = isLoading ? "" : "Chargé!";
+
+        var files = myFile.files;
+        var file = files[0];
+
+        document.getElementById("generateListeWithoutNames").disabled = isLoading || !file;
+        document.getElementById("generateListeWithNames").disabled = isLoading || !file;
+
+        document.getElementById("download").disabled = isLoading || document.getElementById("accounts").innerText == "";
+
+        document.getElementById("inputX").disabled = isLoading;
+        document.getElementById("inputY").disabled = isLoading;
+        document.getElementById("myFile").disabled = isLoading;
+      }
+
+      async function displayName(spanObject, authorID) {
+        let imageContext = canvasImage.getContext("2d");
+        toggleLoading(true);
+        spanObject.classList.remove("ButtonName");
+        spanObject.removeAttribute("onclick");
+        await axios.get('https://admin.fouloscopie.com/users/'+authorID).then(function (response) {
+          spanObject.innerHTML = response.data.data.last_name;
+        });
+        toggleLoading(false);
+      }
+
+      function downloadList() {
+        let result = "";
+        let textLines = document.getElementById("accounts").innerText.split("\n");
+        for(let line of textLines) {
+          if(!line.includes("Déjà de la bonne couleur!")) {
+            result += line + "\n";
+          }
+        }
+        result = result.replaceAll("Mauvaise couleur... ", "");
+        result = result.replaceAll("Afficher nom", "");
+
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(result));
+        element.setAttribute('download', "listeDirtyBiologistan.txt");
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+      }
+      </script>
+  </body>
+</html>
