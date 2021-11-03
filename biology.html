@@ -34,8 +34,9 @@
       <input disabled="true" type="number" id="inputX" value="1"> x
       <input disabled="true" type="number" id="inputY" value="1">
     </form>
+    Les deux options prennent du temps
     <button disabled="true" onclick="displayNames(false)" id="generateListeWithoutNames">Générer la liste sans noms</button>
-    <button disabled="true" onclick="displayNames(true)" id="generateListeWithNames">Générer la liste avec noms (peut être très long &mdash; plusieurs minutes si l'image est grande)</button>
+    <button disabled="true" onclick="displayNames(true)" id="generateListeWithNames">Générer la liste avec noms (prend plus de temps)</button>
     <button disabled="true" onclick="downloadList()" id="download">Télécharger la liste</button>
     <div id="accounts" style="height:300px; font-family: 'Courier New', Courier, monospace; width:80vw; overflow-y: scroll;">
 
@@ -204,7 +205,8 @@
       async function displayNames(isFetchingNames) {
         toggleLoading(true);
         let imageContext = canvasImage.getContext("2d");
-        document.getElementById("accounts").innerHTML = "";
+        let accountsElement = document.getElementById("accounts");
+        accountsElement.innerHTML = "";
         for(let y = 0 ; y < img.height ; y++) {
           for(let x = 0 ; x < img.width ; x++) {
             let X = coordsImage.x+x;
@@ -218,14 +220,24 @@
 
             if(isFetchingNames) {
               await axios.get('https://admin.fouloscopie.com/users/'+accounts[X][Y].author).then(function (response) {
-                document.getElementById("accounts").innerHTML += color+" @ ["+(X+1)+":"+(Y+1)+"] "+(color == accounts[X][Y].color ? "<span style='background-color:green; color: white; border-radius:3px;'>Déjà de la bonne couleur!</span>" : "<span style='background-color:red; color: white; border-radius:3px;'>Mauvaise couleur...</span>")+" "+response.data.data.last_name+"<br/>";
+                var spanObject = document.createElement('span');
+                spanObject.innerHTML = color+" @ ["+(X+1)+":"+(Y+1)+"] "+(color == accounts[X][Y].color ? "<span style='background-color:green; color: white; border-radius:3px;'>Déjà de la bonne couleur!</span>" : "<span style='background-color:red; color: white; border-radius:3px;'>Mauvaise couleur...</span>")+" "+response.data.data.last_name+"<br/>";
+                accountsElement.appendChild(spanObject);
               });
             }
             else {
-              document.getElementById("accounts").innerHTML += color+" @ ["+(X+1)+":"+(Y+1)+"] "+(color == accounts[X][Y].color ? "<span style='background-color:green; color: white; border-radius:3px;'>Déjà de la bonne couleur!</span>" : "<span style='background-color:red; color: white; border-radius:3px;'>Mauvaise couleur...</span>")+" <span class='ButtonName' onclick='displayName(this, \""+accounts[X][Y].author+"\")'>Afficher nom</span><br/>";
+              const promise = new Promise((resolve) => {
+                setTimeout(() => {
+                  var spanObject = document.createElement('span');
+                  spanObject.innerHTML = color+" @ ["+(X+1)+":"+(Y+1)+"] "+(color == accounts[X][Y].color ? "<span style='background-color:green; color: white; border-radius:3px;'>Déjà de la bonne couleur!</span>" : "<span style='background-color:red; color: white; border-radius:3px;'>Mauvaise couleur...</span>")+" <span class='ButtonName' onclick='displayName(this, \""+accounts[X][Y].author+"\")'>Afficher nom</span><br/>";
+                  accountsElement.appendChild(spanObject);
+                  resolve();
+                });
+              });
+              await promise;
             }
 
-            document.getElementById("accounts").scrollTo(0, document.getElementById("accounts").scrollHeight);
+            accountsElement.scrollTo(0, accountsElement.scrollHeight);
           }
         }
         toggleLoading(false);
