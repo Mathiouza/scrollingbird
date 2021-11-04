@@ -234,9 +234,9 @@
             let reverseColor = rgbToHex(255-pixel[0], 255-pixel[1], 255-pixel[2]);
 
             if(isFetchingNames) {
-              await axios.get('https://admin.fouloscopie.com/users/'+accounts[X][Y].author).then(function (response) {
+              await axios.get('https://www.codati.ovh/users/'+accounts[X][Y].author).then(function (response) {
                 var spanObject = document.createElement('span');
-                spanObject.innerHTML = "<span style='background-color:"+color+"; color:"+reverseColor+"'>"+color+"</span> @ ["+(X+1)+":"+(Y+1)+"] "+(color == accounts[X][Y].color ? "<span style='background-color:green; color: white; border-radius:3px;'>Déjà de la bonne couleur!</span>" : "<span style='background-color:red; color: white; border-radius:3px;'>Mauvaise couleur...</span>")+" "+(response.data.data.last_name == "" ? "COMPTE BANNI" : response.data.data.last_name)+"<br/>";
+                spanObject.innerHTML = "<span style='background-color:"+color+"; color:"+reverseColor+"'>"+color+"</span> @ ["+(X+1)+":"+(Y+1)+"] "+(color == accounts[X][Y].color ? "<span style='background-color:green; color: white; border-radius:3px;'>Déjà de la bonne couleur!</span>" : "<span style='background-color:red; color: white; border-radius:3px;'>Mauvaise couleur...</span>")+" "+(response.data.last_name == "" ? "COMPTE BANNI" : response.data.last_name)+"<br/>";
                 accountsElement.appendChild(spanObject);
               });
             }
@@ -278,7 +278,11 @@
           r: parseInt(result[1], 16),
           g: parseInt(result[2], 16),
           b: parseInt(result[3], 16)
-        } : null;
+        } : {
+          r: 0,
+          g: 0,
+          b: 0
+        };
       }
 
       function toggleLoading(isLoading) {
@@ -303,8 +307,8 @@
         toggleLoading(true);
         spanObject.classList.remove("ButtonName");
         spanObject.removeAttribute("onclick");
-        await axios.get('https://admin.fouloscopie.com/users/'+authorID).then(function (response) {
-          spanObject.innerHTML = response.data.data.last_name;
+        await axios.get('https://www.codati.ovh/users/'+authorID).then(function (response) {
+          spanObject.innerHTML = response.data.last_name;
           if(spanObject.innerHTML == "") {
             spanObject.innerHTML = "COMPTE BANNI";
           }
