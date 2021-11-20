@@ -47,6 +47,7 @@
     <button disabled="true" onclick="displayNames(false)" id="generateListeWithoutNames">Générer la liste sans noms</button>
     <button disabled="true" onclick="displayNames(true)" id="generateListeWithNames">Générer la liste avec noms (prend plus de temps)</button>
     <button disabled="true" onclick="downloadList()" id="download">Télécharger la liste</button>
+    <input type="checkbox" id="fullList"/> Inclure les pixels déjà de la bonne couleur
     <div id="accounts" style="height:300px; font-family: 'Courier New', Courier, monospace; width:80vw; overflow-y: scroll;">
 
     </div>
@@ -317,14 +318,16 @@
       }
 
       function downloadList() {
+        let inclure = document.getElementById("fullList").value;
         let result = "";
         let textLines = document.getElementById("accounts").innerText.split("\n");
         for(let line of textLines) {
-          if(!line.includes("Déjà de la bonne couleur!") && !line.includes("COMPTE BANNI")) {
+          if((!line.includes("Déjà de la bonne couleur!") && !inclure || inclure) && !line.includes("COMPTE BANNI")) {
             result += line + "\n";
           }
         }
         result = result.replaceAll("Mauvaise couleur... ", "");
+        result = result.replaceAll("Déjà de la bonne couleur! ", "");
         result = result.replaceAll("Afficher nom", "");
 
         var element = document.createElement('a');
