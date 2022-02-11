@@ -11,7 +11,7 @@ body {
 #banner {
     width: 100%;
     height: 720px;
-    background-image: url("./banner.gif");
+    background-image: url("../img/banner.gif");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -60,7 +60,7 @@ section {
 }
 
 #RRW2 {
-    background-image: url("./rrw2banner.gif");
+    background-image: url("../img/rrw2banner.gif");
     padding-top: 50px;
     padding-bottom: 50px;
     background-position: center;
